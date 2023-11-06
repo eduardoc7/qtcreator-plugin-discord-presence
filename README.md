@@ -13,7 +13,15 @@ This plugin adds Discord Rich Presence support to Qt Creator, with a decent chun
 | Misc        | `.gitignore` `Makefile` `CMakeLists.txt`
 
 ## Supported Platforms
-Currently the release is being generated only for Linux using Qt 6 for the latest released versions of Qt Creator. Who knows, in the future, the Windows version will work by adjusting dependencies.
+The plugin currently supports the following operating systems:
+- Windows 64-bit
+- Linux Derived 
+
+## How to install the plugin on Qt Creator
+Download the plugin archive from the [release page](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/releases/tag/latest) and follow the installation tutorial provided in [Qt Documentation](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
+
+## How to use with different versions of Qt Creator
+To use the plugin with different versions of Qt Creator, you need to generate a new build by specifying the target Qt Creator version and the corresponding Qt version in the build process. Modify the variables `${qt_dir}` and `${qtc_dir}` in the [CMakeLists.txt](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/blob/main/CMakeLists.txt). Alternatively, you can adjust the ENV variables in the [Github Action Workflow](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/blob/main/.github/workflows/build_cmake.yml) to match the desired Qt and Qt Creator versions.
 
 ## How to Build
 Create a build directory and run
