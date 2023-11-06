@@ -10,16 +10,20 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD 17)
 
-# Inclui as bibliotecas do Discord RPC
-set(DISCORD_RPC_LIB "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/discord-rpc/lib/libdiscord-rpc.so")
-set(DISCORD_RPC_LIB_PATH "${CMAKE_SOURCE_DIR}/dependencies/discord-rpc/lib")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/dependencies/discord-rpc/include")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(DISCORD_RPC_LIB "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/win64-dynamic/lib/discord-rpc.lib")
+    set(DISCORD_RPC_LIB_PATH "${CMAKE_SOURCE_DIR}/dependencies/win64-dynamic/lib")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(DISCORD_RPC_LIB "${CMAKE_CURRENT_SOURCE_DIR}/dependencies/linux-dynamic/lib/libdiscord-rpc.so")
+    set(DISCORD_RPC_LIB_PATH "${CMAKE_SOURCE_DIR}/dependencies/linux-dynamic/lib")
+endif()
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/dependencies/linux-dynamic/include")
 
 find_package(QtCreator REQUIRED COMPONENTS Core ProjectExplorer)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core5Compat Widgets)
 set(QtX Qt${QT_VERSION_MAJOR})
 
-# nao sei dizer
 # Add a CMake option that enables building your plugin with tests.
 # You don't want your released plugin binaries to contain tests,
 # so make that default to 'NO'.
