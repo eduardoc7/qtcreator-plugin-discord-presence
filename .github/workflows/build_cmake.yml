@@ -1,20 +1,63 @@
 name: Build CuteDiscordPresence on multiple platforms
 
-on:
-  push:
-    branches: [ "main" ]
+on: [push]
 
 # The version of Qt must be the same as the one used to build Qt Creator. 
 # To check this: Help -> System Information within Qt Creator
 env:
   PLUGIN_NAME: CuteDiscordPresence
   QT_VERSION: 6.4.3
-  QT_CREATOR_VERSION: 11.0.2
+  QT_CREATOR_VERSION: 13.0.0
   QT_CREATOR_SNAPSHOT: NO
   CMAKE_VERSION: 3.24.2
   NINJA_VERSION: 1.10.2
 
 jobs:
+  # The release job.
+  # If the github.ref contains /tags/v a release will be set up.
+  # This is done before the builds to simplify the logic to upload the build artifacts to the release.
+  # The release stage a file that contains the URL of where the build artifacts must go.
+  # It is also executed only once, on one agent.
+  release:
+    name: Create release
+    if: contains(github.ref, '/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release
+        if: contains(github.ref, '/tags/v')
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
+            Download the correct file based on operating system and architecture of Qt Creator.
+            [How to install the plugin by Qt Creator](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
+
+            Please refer to the main page of the project for usage information.
+
+            On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
+            To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
+
+            **Warning:** The plugin has not been thoroughly tested on Windows and may not function optimally due to library dependencies on discord-rpc. 
+            Please feel free to test it on Windows and contribute any necessary adjustments.
+            
+          draft: false
+          prerelease: false
+
+      - name: Store release url
+        shell: pwsh
+        run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
+
+      - name: Upload release url
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./release_upload_url.txt
+          name: release_upload_url.txt
+
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -311,12 +354,43 @@ jobs:
           message("::error::${error_message}")
           message(FATAL_ERROR "Build failed")
         endif()
-    
+
+    - name: Extract artifact
+      run: 7z x ${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}.7z
+
+    - name: Create temp directory
+      run: mkdir temp_dependencies
+
+    - name: Copy dependencies to Qt Creator plugins directory
+      shell: cmake -P {0}
+      run: |
+        if ("${{ runner.os }}" STREQUAL "Linux")
+          file(COPY dependencies/linux-dynamic/lib/ DESTINATION lib/qtcreator/plugins/)
+        elseif ("${{ runner.os }}" STREQUAL "Windows")
+          file(COPY 
+          dependencies/win64-dynamic/lib/discord-rpc.lib
+          dependencies/win64-dynamic/bin/discord-rpc.dll 
+          dependencies/win64-dynamic/bin/send-presence.exe 
+          DESTINATION lib/qtcreator/plugins/)
+        endif()
+
+    - name: Create artifact archive
+      shell: cmake -P {0}
+      run: |
+        if ("${{ runner.os }}" STREQUAL "Windows")
+          execute_process(
+            COMMAND powershell -Command Get-ChildItem -Path lib | ForEach-Object { 7z a -bb1 -t7z "${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies.7z" $_.FullName })
+        elseif ("${{ runner.os }}" STREQUAL "Linux")
+          execute_process(
+            COMMAND 7z a -bb1 -t7z "${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies.7z" lib/*
+          )
+        endif()
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.PLUGIN_NAME}}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}
-        path: ./${{ env.PLUGIN_NAME}}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}.7z
+        name: ${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies
+        path: ./${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies.7z
 
   publish:
     needs: build
@@ -341,7 +415,36 @@ jobs:
             artifact: "linux-x64"
     
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download release url
+      if: contains(github.ref, '/tags/v')
+      uses: actions/download-artifact@v2
+      with:
+        name: release_upload_url.txt
+        path: ./
+
     - name: Download artifact
       uses: actions/download-artifact@v3
       with:
-        name: ${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}
+        name: ${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies
+
+    - name: Set Release Var
+      if: contains(github.ref, '/tags/v')
+      shell: pwsh
+      run: |
+        ${RELEASE_URL} = Get-Content ./release_upload_url.txt
+        Write-Output "Release URL: ${RELEASE_URL}"
+        Write-Output "RELEASE_URL=${RELEASE_URL}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Upload release artifacts
+      if: contains(github.ref, '/tags/v')
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{env.RELEASE_URL}}
+        asset_path: ${{github.workspace}}/${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies.7z
+        asset_name: ${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.artifact }}-with-dependencies
+        asset_content_type: application/zip
