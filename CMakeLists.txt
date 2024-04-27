@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(CuteDiscordPresence)
 
 list(APPEND CMAKE_PREFIX_PATH ${qt_dir})
-list(APPEND CMAKE_PREFIX_PATH "/home/eduardo/AllQtFramewrok/qtcreator-13.0.0")
+list(APPEND CMAKE_PREFIX_PATH ${qtc_dir})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_AUTOMOC ON)
