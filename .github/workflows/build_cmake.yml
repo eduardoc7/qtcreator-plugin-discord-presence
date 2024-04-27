@@ -95,8 +95,8 @@ jobs:
       plugin-archive-full-Windows: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Windows }}
       plugin-archive-full-Linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Linux }}
 
-      plugin-archive-name-win64: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-win64 }}
-      plugin-archive-name-linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-linux }}
+      plugin-archive-name-Windows: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-Windows }}
+      plugin-archive-name-Linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-Linux }}
 
     steps:
     - uses: actions/checkout@v3
@@ -447,7 +447,7 @@ jobs:
     - name: test
       env:
         PLUGIN_ARCHIVE_FULL: ${{ needs.build.outputs.plugin-archive-full-[format('{0}', matrix.name)] }}
-        # PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.format('plugin-archive-name-{0}', matrix.name) }}
+        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
 
       run: |
         echo "PLUGIN_ARCHIVE_FULL=${{ env.PLUGIN_ARCHIVE_FULL }}"
@@ -463,7 +463,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v3
       env:
-        PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
+        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
       with:
         name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
@@ -480,8 +480,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
-        PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
+        PLUGIN_ARCHIVE_FULL: ${{ needs.build.outputs.plugin-archive-full-[format('{0}', matrix.name)] }}
+        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
       with:
         upload_url: ${{env.RELEASE_URL}}
         asset_path: ${{env.PLUGIN_ARCHIVE_FULL}}
