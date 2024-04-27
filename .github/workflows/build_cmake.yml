@@ -412,60 +412,12 @@ jobs:
         path: ${{env.PLUGIN_ARCHIVE_FULL}}
         name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
-    - name: Setting plugin path variables
-      id: plugin-paths
-      run: |
-        echo "PLUGIN_ARCHIVE_FULL-${{matrix.config.name}}=${{env.PLUGIN_ARCHIVE_FULL}}" >> $env:GITHUB_OUTPUT
-        echo "PLUGIN_ARCHIVE_NAME-${{matrix.config.name}}=${{env.PLUGIN_ARCHIVE_NAME}}" >> $env:GITHUB_OUTPUT
-
-  publish:
-    needs: build
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: true
-
-      # Set up a matrix to run the following 2 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        include:
-          - name: "Windows"
-            os: windows-latest
-            artifact: "win-x64"
-          - name: "Linux"
-            os: ubuntu-latest
-            artifact: "linux-x64"
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: test
-      env:
-        PLUGIN_ARCHIVE_FULL: ${{ needs.build.outputs.plugin-archive-full-[format('{0}', matrix.name)] }}
-        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
-
-      run: |
-        echo "PLUGIN_ARCHIVE_FULL=${{ env.PLUGIN_ARCHIVE_FULL }}"
-        echo "PLUGIN_ARCHIVE_NAME=${{ env.PLUGIN_ARCHIVE_NAME }}"
-
     - name: Download release url
       if: contains(github.ref, '/tags/v')
       uses: actions/download-artifact@v2
       with:
         name: release_upload_url.txt
         path: ./
-
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      env:
-        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
-      with:
-        name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
@@ -480,8 +432,6 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PLUGIN_ARCHIVE_FULL: ${{ needs.build.outputs.plugin-archive-full-[format('{0}', matrix.name)] }}
-        PLUGIN_ARCHIVE_NAME: ${{ needs.build.outputs.plugin-archive-name-[format('{0}', matrix.name)] }}
       with:
         upload_url: ${{env.RELEASE_URL}}
         asset_path: ${{env.PLUGIN_ARCHIVE_FULL}}
