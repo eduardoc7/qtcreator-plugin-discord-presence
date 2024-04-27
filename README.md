@@ -26,7 +26,7 @@ To use the plugin with different versions of Qt Creator, you need to generate a 
 ## How to Build
 Create a build directory and run
 ```bash
-    cmake -DCMAKE_PREFIX_PATH=<path_to_qtcreator> -DCMAKE_BUILD_TYPE=RelWithDebInfo <path_to_plugin_source>
+    cmake -DCMAKE_PREFIX_PATH=<path_to_qt_framework>;<path_to_qtcreator> -DCMAKE_BUILD_TYPE=RelWithDebInfo <path_to_plugin_source>
     cmake --build .
 ```
 where `<path_to_qtcreator>` is the relative or absolute path to a Qt Creator build directory, or to a

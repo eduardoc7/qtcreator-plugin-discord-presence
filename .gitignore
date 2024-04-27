@@ -1,6 +1,8 @@
 .vscode
 .env*
 !.env.example
+.cache/
+CMakeLists.txt.user
 
 # Prerequisites
 *.d
@@ -16,7 +18,7 @@
 *.pch
 
 # Compiled Dynamic libraries
-*.so
+# *.so
 *.dylib
 
 # Fortran module files
