@@ -3,6 +3,12 @@ This plugin adds Discord Rich Presence support to Qt Creator, with a decent chun
 
 ![](screenshots/demo_cycle_20fps.gif?raw=true)
 
+---
+
+ <a href="https://buymeacoffee.com/eduardocorg" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+---
+
 ## Recognized File Types
 | Category    | Extensions |
 |-------------|------------|
