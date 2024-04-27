@@ -44,6 +44,8 @@ jobs:
             On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
             To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
             
+            *PS: I have a "Buy me a coffee" account if you want to supporting me, see the main page if interested in contributing something to say thank you for the plugin*.
+            
           draft: false
           prerelease: false
 
