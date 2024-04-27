@@ -441,7 +441,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v3
       with:
-        name: ${{env.PLUGIN_ARCHIVE_FULL}}
+        name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
