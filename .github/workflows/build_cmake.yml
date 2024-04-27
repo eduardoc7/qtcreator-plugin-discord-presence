@@ -91,6 +91,10 @@ jobs:
             }
       fail-fast: false
 
+    outputs:
+      plugin-archive-full: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL }}
+      plugin-archive-name: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME }}
+
     steps:
     - uses: actions/checkout@v3
     - name: Download Ninja and CMake
@@ -405,8 +409,19 @@ jobs:
         path: ${{env.PLUGIN_ARCHIVE_FULL}}
         name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
+    - name: Setting plugin path variables
+      id: plugin-paths
+      run: |
+        echo "PLUGIN_ARCHIVE_FULL=${{env.PLUGIN_ARCHIVE_FULL}}" >> $env:GITHUB_OUTPUT
+        echo "PLUGIN_ARCHIVE_NAME=${{env.PLUGIN_ARCHIVE_NAME}}" >> $env:GITHUB_OUTPUT
+
   publish:
     needs: build
+    steps:
+      - env:
+          PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
+          PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
+
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     
@@ -433,8 +448,8 @@ jobs:
 
     - name: test
       run: |
-        echo "PLUGIN_ARCHIVE_FULL=${{ needs.build.outputs.PLUGIN_ARCHIVE_FULL }}"
-        echo "PLUGIN_ARCHIVE_NAME=${{ needs.build.outputs.PLUGIN_ARCHIVE_NAME }}"
+        echo "PLUGIN_ARCHIVE_FULL=${{ PLUGIN_ARCHIVE_FULL }}"
+        echo "PLUGIN_ARCHIVE_NAME=${{ PLUGIN_ARCHIVE_NAME }}"
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
@@ -446,7 +461,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v3
       with:
-        name: ${{needs.build.outputs.PLUGIN_ARCHIVE_NAME}}
+        name: ${{PLUGIN_ARCHIVE_NAME}}
 
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
@@ -463,6 +478,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{env.RELEASE_URL}}
-        asset_path: ${{needs.build.outputs.PLUGIN_ARCHIVE_FULL}}
-        asset_name: ${{needs.build.outputs.PLUGIN_ARCHIVE_NAME}}
+        asset_path: ${{PLUGIN_ARCHIVE_FULL}}
+        asset_name: ${{PLUGIN_ARCHIVE_NAME}}
         asset_content_type: application/zip
