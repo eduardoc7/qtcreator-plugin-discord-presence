@@ -430,14 +430,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    
-    - name: Show Environment Variables
-      run: |
-        env
+
     - name: test
       run: |
-        echo "PLUGIN_ARCHIVE_FULL=${{ env.PLUGIN_ARCHIVE_FULL }}"
-        echo "PLUGIN_ARCHIVE_NAME=${{ env.PLUGIN_ARCHIVE_NAME }}"
+        echo "PLUGIN_ARCHIVE_FULL=${{ needs.build.outputs.PLUGIN_ARCHIVE_FULL }}"
+        echo "PLUGIN_ARCHIVE_NAME=${{ needs.build.outputs.PLUGIN_ARCHIVE_NAME }}"
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
@@ -449,7 +446,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v3
       with:
-        name: ${{env.PLUGIN_ARCHIVE_NAME}}
+        name: ${{needs.build.outputs.PLUGIN_ARCHIVE_NAME}}
 
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
@@ -466,6 +463,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{env.RELEASE_URL}}
-        asset_path: ${{env.PLUGIN_ARCHIVE_FULL}}
-        asset_name: ${{env.PLUGIN_ARCHIVE_NAME}}
+        asset_path: ${{needs.build.outputs.PLUGIN_ARCHIVE_FULL}}
+        asset_name: ${{needs.build.outputs.PLUGIN_ARCHIVE_NAME}}
         asset_content_type: application/zip
