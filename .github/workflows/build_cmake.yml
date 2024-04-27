@@ -446,9 +446,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: test
-        env:
-          PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
-          PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
+      env:
+        PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
+        PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
       run: |
         echo "PLUGIN_ARCHIVE_FULL=${{ env.PLUGIN_ARCHIVE_FULL }}"
         echo "PLUGIN_ARCHIVE_NAME=${{ env.PLUGIN_ARCHIVE_NAME }}"
