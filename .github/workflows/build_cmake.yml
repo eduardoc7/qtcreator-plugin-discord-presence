@@ -438,11 +438,6 @@ jobs:
         name: release_upload_url.txt
         path: ./
 
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: ${{env.PLUGIN_ARCHIVE_NAME}}
-
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
       shell: pwsh
