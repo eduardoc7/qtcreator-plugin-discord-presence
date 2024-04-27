@@ -417,7 +417,6 @@ jobs:
 
   publish:
     needs: build
-
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     
@@ -442,7 +441,7 @@ jobs:
       - env:
         PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
         PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
-        
+
     - name: Checkout code
       uses: actions/checkout@v2
 
