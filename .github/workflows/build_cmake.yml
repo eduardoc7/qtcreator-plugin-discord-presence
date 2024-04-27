@@ -484,6 +484,6 @@ jobs:
         PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
       with:
         upload_url: ${{env.RELEASE_URL}}
-        asset_path: ${{PLUGIN_ARCHIVE_FULL}}
-        asset_name: ${{PLUGIN_ARCHIVE_NAME}}
+        asset_path: ${{env.PLUGIN_ARCHIVE_FULL}}
+        asset_name: ${{env.PLUGIN_ARCHIVE_NAME}}
         asset_content_type: application/zip
