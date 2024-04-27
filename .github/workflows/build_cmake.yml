@@ -438,17 +438,17 @@ jobs:
             artifact: "linux-x64"
     
     steps:
-      env:
-        PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
-        PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
+      # env:
+      #   PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
+      #   PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
 
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: test
-      run: |
-        echo "PLUGIN_ARCHIVE_FULL=${{ PLUGIN_ARCHIVE_FULL }}"
-        echo "PLUGIN_ARCHIVE_NAME=${{ PLUGIN_ARCHIVE_NAME }}"
+    # - name: test
+    #   run: |
+    #     echo "PLUGIN_ARCHIVE_FULL=${{ PLUGIN_ARCHIVE_FULL }}"
+    #     echo "PLUGIN_ARCHIVE_NAME=${{ PLUGIN_ARCHIVE_NAME }}"
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
