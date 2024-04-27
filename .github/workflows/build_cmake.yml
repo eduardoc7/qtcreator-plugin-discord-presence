@@ -66,7 +66,7 @@ jobs:
       matrix:
         config:
           - {
-              name: "win64",
+              name: "Windows",
               os: windows-latest,
               sys: "windows",
               arch: "x64",
@@ -79,7 +79,7 @@ jobs:
               artifact: "win-x64"
             }
           - {
-              name: "linux",
+              name: "Linux",
               os: ubuntu-latest,
               sys: "linux",
               arch: "x64",
@@ -90,6 +90,13 @@ jobs:
               artifact: "linux-x64"
             }
       fail-fast: false
+
+    outputs:
+      plugin-archive-full-Windows: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Windows }}
+      plugin-archive-full-Linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Linux }}
+
+      plugin-archive-name-Windows: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-Windows }}
+      plugin-archive-name-Linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-Linux }}
 
     steps:
     - uses: actions/checkout@v3
@@ -404,32 +411,6 @@ jobs:
       with:
         path: ${{env.PLUGIN_ARCHIVE_FULL}}
         name: ${{env.PLUGIN_ARCHIVE_NAME}}
-
-  publish:
-    needs: build
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: true
-
-      # Set up a matrix to run the following 2 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        include:
-          - name: "Windows x64"
-            os: windows-latest
-            artifact: "win-x64"
-          - name: "Linux x64"
-            os: ubuntu-latest
-            artifact: "linux-x64"
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
