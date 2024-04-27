@@ -66,7 +66,7 @@ jobs:
       matrix:
         config:
           - {
-              name: "win64",
+              name: "Windows",
               os: windows-latest,
               sys: "windows",
               arch: "x64",
@@ -79,7 +79,7 @@ jobs:
               artifact: "win-x64"
             }
           - {
-              name: "linux",
+              name: "Linux",
               os: ubuntu-latest,
               sys: "linux",
               arch: "x64",
@@ -92,8 +92,11 @@ jobs:
       fail-fast: false
 
     outputs:
-      plugin-archive-full: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL }}
-      plugin-archive-name: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME }}
+      plugin-archive-full-Windows: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Windows }}
+      plugin-archive-full-Linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_FULL-Linux }}
+
+      plugin-archive-name-win64: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-win64 }}
+      plugin-archive-name-linux: ${{ steps.plugin-paths.outputs.PLUGIN_ARCHIVE_NAME-linux }}
 
     steps:
     - uses: actions/checkout@v3
@@ -412,8 +415,8 @@ jobs:
     - name: Setting plugin path variables
       id: plugin-paths
       run: |
-        echo "PLUGIN_ARCHIVE_FULL=${{env.PLUGIN_ARCHIVE_FULL}}" >> $env:GITHUB_OUTPUT
-        echo "PLUGIN_ARCHIVE_NAME=${{env.PLUGIN_ARCHIVE_NAME}}" >> $env:GITHUB_OUTPUT
+        echo "PLUGIN_ARCHIVE_FULL-${{matrix.config.name}}=${{env.PLUGIN_ARCHIVE_FULL}}" >> $env:GITHUB_OUTPUT
+        echo "PLUGIN_ARCHIVE_NAME-${{matrix.config.name}}=${{env.PLUGIN_ARCHIVE_NAME}}" >> $env:GITHUB_OUTPUT
 
   publish:
     needs: build
@@ -430,24 +433,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         include:
-          - name: "Windows x64"
+          - name: "Windows"
             os: windows-latest
             artifact: "win-x64"
-          - name: "Linux x64"
+          - name: "Linux"
             os: ubuntu-latest
             artifact: "linux-x64"
     
     steps:
-      # env:
-      #   PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
-      #   PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
-
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: test
       env:
-        PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full}}
+        PLUGIN_ARCHIVE_FULL: ${{needs.build.outputs.plugin-archive-full-${{matrix.name}}}}
         PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
       run: |
         echo "PLUGIN_ARCHIVE_FULL=${{ env.PLUGIN_ARCHIVE_FULL }}"
