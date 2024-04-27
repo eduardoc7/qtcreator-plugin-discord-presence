@@ -465,7 +465,7 @@ jobs:
       env:
         PLUGIN_ARCHIVE_NAME: ${{needs.build.outputs.plugin-archive-name}}
       with:
-        name: ${{PLUGIN_ARCHIVE_NAME}}
+        name: ${{env.PLUGIN_ARCHIVE_NAME}}
 
     - name: Set Release Var
       if: contains(github.ref, '/tags/v')
