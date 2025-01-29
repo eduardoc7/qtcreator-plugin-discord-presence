@@ -245,6 +245,9 @@ bool QtCreatorDRPCPlugin::initialize( const QStringList& arguments, QString* err
     Q_UNUSED( arguments )
     Q_UNUSED( error_string )
 
+    //set the plugin's unique ID
+    setId("CuteDiscordPresence");
+
     initializeDiscordRichPresence( GLOBAL_DISCORD_APPLICATION_ID );
     initializeControlMenu();
     activateDiscordRichPresence();
