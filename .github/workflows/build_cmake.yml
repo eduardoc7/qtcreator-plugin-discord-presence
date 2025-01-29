@@ -54,7 +54,7 @@ jobs:
         run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
 
       - name: Upload release url
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ./release_upload_url.txt
           name: release_upload_url.txt
@@ -408,7 +408,7 @@ jobs:
         Write-Output "PLUGIN_ARCHIVE_FULL=${{github.workspace}}/${env:PLUGIN_ARCHIVE_FULL}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         Write-Output "PLUGIN_ARCHIVE_NAME=${env:PLUGIN_ARCHIVE_NAME}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       id: upload_artifact
       with:
         path: ${{env.PLUGIN_ARCHIVE_FULL}}
@@ -416,7 +416,7 @@ jobs:
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: release_upload_url.txt
         path: ./
