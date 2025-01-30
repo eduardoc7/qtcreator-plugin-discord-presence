@@ -38,9 +38,6 @@ add_qtc_plugin(CuteDiscordPresence
   PLUGIN_DEPENDS
     QtCreator::Core
     QtCreator::ProjectExplorer
-  PLUGIN_DEPENDS_IDS  #explicitly define dependency IDs
-    Core
-    ProjectExplorer
   DEPENDS
     ${QtX}::Widgets
     QtCreator::ExtensionSystem
