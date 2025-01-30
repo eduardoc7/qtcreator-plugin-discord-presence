@@ -13,6 +13,67 @@
         "This plugin adds Discord Rich Presence support to Qt Creator, with a decent chunk of recognized file types, and handmade icons for some of the more obscure file types without icons of their own."
     ],
     "Url": "https://github.com/eduardoc7/qtcreator-plugin-discord-presence",
-    ${IDE_PLUGIN_DEPENDENCIES}
+    "Dependencies": [
+        {
+            "Name": "Core",
+            "Id": "Core",
+            "Version": "10.0",
+            "CompatVersion": "10.0",
+            "Vendor": "Qt",
+            "VendorId" : "qt",
+            "Copyright": "(C) qt",
+            "License": "",
+            "Description": "",
+            "Url": ""
+        },
+        {
+            "Name": "ProjectExplorer",
+            "Id": "ProjectExplorer",
+            "Version": "10.0",
+            "CompatVersion": "10.0",
+            "Vendor": "Qt",
+            "VendorId" : "qt",
+            "Copyright": "(C) qt",
+            "License": "",
+            "Description": "",
+            "Url": ""
+        },
+        {
+            "Name": "ExtensionSystem",
+            "Id": "ExtensionSystem",
+            "Version": "10.0",
+            "CompatVersion": "10.0",
+            "Vendor": "Qt",
+            "VendorId" : "qt",
+            "Copyright": "(C) qt",
+            "License": "",
+            "Description": "",
+            "Url": ""
+        },
+        {
+            "Name": "Utils",
+            "Id": "Utils",
+            "Version": "10.0",
+            "CompatVersion": "10.0",
+            "Vendor": "Qt",
+            "VendorId" : "qt",
+            "Copyright": "(C) qt",
+            "License": "",
+            "Description": "",
+            "Url": ""
+        },
+        {
+            "Name": "DiscordRPC",
+            "Id": "discord-rpc",
+            "Version": "1.0.0",
+            "CompatVersion": "1.0.0",
+            "Vendor": "Discord",
+            "VendorId" : "discord",
+            "Copyright": "(C) Discord",
+            "License": "",
+            "Description": "",
+            "Url": ""
+        }
+    ]
 }
 
