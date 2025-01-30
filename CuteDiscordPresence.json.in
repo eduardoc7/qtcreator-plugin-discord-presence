@@ -65,8 +65,8 @@
         {
             "Name": "DiscordRPC",
             "Id": "discord-rpc",
-            "Version": "*",
-            "CompatVersion": "*",
+            "Version": "3.4.0",
+            "CompatVersion": "3.4.0",
             "Vendor": "Discord",
             "VendorId" : "discord",
             "Copyright": "(C) Discord",
