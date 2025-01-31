@@ -7,7 +7,7 @@ on: [push]
 env:
   PLUGIN_NAME: CuteDiscordPresence
   QT_VERSION: 6.6.2
-  QT_CREATOR_VERSION: 13.0.0
+  QT_CREATOR_VERSION: 15.0.1
   QT_CREATOR_SNAPSHOT: NO
   QT_MIRRORS: download.qt.io;mirrors.ocf.berkeley.edu/qt;ftp.fau.de/qtproject;mirror.bit.edu.cn/qtproject
   CMAKE_VERSION: 3.28.1
@@ -54,7 +54,7 @@ jobs:
         run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
 
       - name: Upload release url
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ./release_upload_url.txt
           name: release_upload_url.txt
