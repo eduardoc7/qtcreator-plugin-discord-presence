@@ -13,41 +13,6 @@
         "This plugin adds Discord Rich Presence support to Qt Creator, with a decent chunk of recognized file types, and handmade icons for some of the more obscure file types without icons of their own."
     ],
     "Url": "https://github.com/eduardoc7/qtcreator-plugin-discord-presence",
-    "Dependencies": [
-        {
-            "Name": "Core",
-            "Id": "Core",
-            "Version": "15.0.1",
-            "CompatVersion": "15.0.0",
-            "Vendor": "Qt",
-            "VendorId" : "qt",
-            "Copyright": "(C) qt",
-            "License": "",
-            "Description": "",
-            "Url": ""
-        },
-        {
-            "Name": "ProjectExplorer",
-            "Id": "ProjectExplorer",
-            "Version": "15.0.1",
-            "CompatVersion": "15.0.0",
-            "Vendor": "Qt",
-            "VendorId" : "qt",
-            "Copyright": "(C) qt",
-            "License": "",
-            "Description": "",
-            "Url": ""
-        },
-        {
-            "Name": "DiscordRPC",
-            "Id": "discord-rpc",
-            "Vendor": "Discord",
-            "VendorId" : "discord",
-            "Copyright": "(C) Discord",
-            "License": "",
-            "Description": "",
-            "Url": ""
-        }
-    ]
+    ${IDE_PLUGIN_DEPENDENCIES}
 }
 
