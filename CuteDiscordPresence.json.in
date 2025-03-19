@@ -1,8 +1,10 @@
 {
+    "Id" : "cute-discord-presence",
     "Name": "Cute Discord Presence",
-    "Version": "1.0.1",
+    "Version": "1.0.2",
     "CompatVersion": "1.0.0",
     "Vendor": "Eduardo Cordeiro",
+    "VendorId" : "eduardoc7",
     "Copyright": "(C) 2024 Eduardo Cordeiro",
     "License": [
         "GNU General Public License v3.0"

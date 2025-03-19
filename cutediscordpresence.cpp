@@ -211,7 +211,7 @@ void QtCreatorDRPCPlugin::deactivateDiscordRichPresence() {
 }
 
 void QtCreatorDRPCPlugin::initializeControlMenu() {
-    Core::ActionContainer* drpc_control_menu { Core::ActionManager::createMenu( GLOBAL_DRPC_CONTROL_MENU_ID ) };
+    Core::ActionContainer* drpc_control_menu { Core::ActionManager::createMenu(Utils::Id(GLOBAL_DRPC_CONTROL_MENU_ID)) };
     drpc_control_menu->menu()->setTitle( "Discord RPC" );
 
     QAction* drpc_control_start_action { new QAction { "Start Discord RPC", this } };
@@ -219,7 +219,7 @@ void QtCreatorDRPCPlugin::initializeControlMenu() {
 
     Core::Command* drpc_control_start_command {
         Core::ActionManager::registerAction( drpc_control_start_action,
-                                             GLOBAL_DRPC_CONTROL_MENU_START_ACTION_ID,
+                                             Utils::Id(GLOBAL_DRPC_CONTROL_MENU_START_ACTION_ID),
                                              Core::Context { Core::Constants::C_GLOBAL } )
     };
 

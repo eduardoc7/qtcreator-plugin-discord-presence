@@ -30,9 +30,9 @@
 
 namespace QtCreatorDRPC {
 
-constexpr const char* GLOBAL_DRPC_CONTROL_MENU_ID                 { "QtCreatorDRPC.Menu" };
-constexpr const char* GLOBAL_DRPC_CONTROL_MENU_START_ACTION_ID    { "QtCreatorDRPC.Action.Start" };
-constexpr const char* GLOBAL_DRPC_CONTROL_MENU_STOP_ACTION_ID     { "QtCreatorDRPC.Action.Stop" };
+constexpr char GLOBAL_DRPC_CONTROL_MENU_ID[] = "QtCreatorDRPC.Menu";
+constexpr char GLOBAL_DRPC_CONTROL_MENU_START_ACTION_ID[] = "QtCreatorDRPC.Action.Start";
+constexpr char GLOBAL_DRPC_CONTROL_MENU_STOP_ACTION_ID[] = "QtCreatorDRPC.Action.Stop";
 constexpr const char* GLOBAL_DISCORD_APPLICATION_ID               { "937400240473006092" };
 
 class QDiscordRichPresence {
