@@ -7,11 +7,11 @@ on: [push]
 env:
   PLUGIN_NAME: CuteDiscordPresence
   QT_VERSION: 6.6.2
-  QT_CREATOR_VERSION: 13.0.0
+  QT_CREATOR_VERSION: 16.0.0
   QT_CREATOR_SNAPSHOT: NO
   QT_MIRRORS: download.qt.io;mirrors.ocf.berkeley.edu/qt;ftp.fau.de/qtproject;mirror.bit.edu.cn/qtproject
-  CMAKE_VERSION: 3.28.1
-  NINJA_VERSION: 1.10.2
+  CMAKE_VERSION: "3.29.6"
+  NINJA_VERSION: "1.12.1"
 
 jobs:
   # The release job.
@@ -54,7 +54,7 @@ jobs:
         run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
 
       - name: Upload release url
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ./release_upload_url.txt
           name: release_upload_url.txt
@@ -247,13 +247,6 @@ jobs:
           )
         endif()
 
-        file(READ "qt6/${qt_dir_prefix}/mkspecs/qconfig.pri" qtconfig)
-        string(REPLACE "Enterprise" "OpenSource" qtconfig "${qtconfig}")
-        string(REPLACE "licheck.exe" "" qtconfig "${qtconfig}")
-        string(REPLACE "licheck64" "" qtconfig "${qtconfig}")
-        string(REPLACE "licheck_mac" "" qtconfig "${qtconfig}")
-        file(WRITE "qt6/${qt_dir_prefix}/mkspecs/qconfig.pri" "${qtconfig}")
-
         if ("${{ runner.os }}" STREQUAL "Windows")
           # deploy "system" runtimes into Qt, so they get deployed as well
           if ("x${{ matrix.config.environment_script }}" STREQUAL "x")
@@ -408,7 +401,7 @@ jobs:
         Write-Output "PLUGIN_ARCHIVE_FULL=${{github.workspace}}/${env:PLUGIN_ARCHIVE_FULL}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         Write-Output "PLUGIN_ARCHIVE_NAME=${env:PLUGIN_ARCHIVE_NAME}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       id: upload_artifact
       with:
         path: ${{env.PLUGIN_ARCHIVE_FULL}}
@@ -416,7 +409,7 @@ jobs:
 
     - name: Download release url
       if: contains(github.ref, '/tags/v')
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: release_upload_url.txt
         path: ./
