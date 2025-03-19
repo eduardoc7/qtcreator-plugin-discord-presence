@@ -20,45 +20,45 @@ jobs:
   # This is done before the builds to simplify the logic to upload the build artifacts to the release.
   # The release stage a file that contains the URL of where the build artifacts must go.
   # It is also executed only once, on one agent.
-  release:
-    name: Create release
-    if: contains(github.ref, '/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create release
-        if: contains(github.ref, '/tags/v')
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
-            Download the correct file based on operating system and architecture of Qt Creator.
-            To install the plugin in Qt Creator, follow these steps: go to "Help" -> "About Plugins" -> "Install Plugin...". 
-            Further instructions are available in the official Qt Creator documentation: [How to install plugins](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
+  # release:
+  #   name: Create release
+  #   if: contains(github.ref, '/tags/v')
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Create release
+  #       if: contains(github.ref, '/tags/v')
+  #       id: create_release
+  #       uses: actions/create-release@latest
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ github.ref }}
+  #         release_name: ${{ github.ref }}
+  #         body: |
+  #           Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
+  #           Download the correct file based on operating system and architecture of Qt Creator.
+  #           To install the plugin in Qt Creator, follow these steps: go to "Help" -> "About Plugins" -> "Install Plugin...". 
+  #           Further instructions are available in the official Qt Creator documentation: [How to install plugins](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
 
-            Please refer to the main page of the project for usage information.
+  #           Please refer to the main page of the project for usage information.
 
-            On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
-            To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
+  #           On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
+  #           To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
             
-            *PS: I have a "Buy me a coffee" account if you want to supporting me, see the main page if interested in contributing something to say thank you for the plugin*.
+  #           *PS: I have a "Buy me a coffee" account if you want to supporting me, see the main page if interested in contributing something to say thank you for the plugin*.
             
-          draft: false
-          prerelease: false
+  #         draft: false
+  #         prerelease: false
 
-      - name: Store release url
-        shell: pwsh
-        run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
+  #     - name: Store release url
+  #       shell: pwsh
+  #       run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
 
-      - name: Upload release url
-        uses: actions/upload-artifact@v4
-        with:
-          path: ./release_upload_url.txt
-          name: release_upload_url.txt
+  #     - name: Upload release url
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         path: ./release_upload_url.txt
+  #         name: release_upload_url.txt
 
   build:
     name: Build ${{ matrix.config.name }}
@@ -317,7 +317,51 @@ jobs:
       with:
         name: ${{ env.PLUGIN_NAME }}.json
         path: ./build/build/${{ env.PLUGIN_NAME }}.json
+        
+  release:
+    name: Create Release
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    needs: [build]
 
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release-with-dirs
+
+    - name: Fixup artifacts
+      run: |
+        mkdir release
+        mv release-with-dirs/*/* release/
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: |
+          Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
+          Download the correct file based on operating system and architecture of Qt Creator.
+          To install the plugin in Qt Creator, follow these steps: go to "Help" -> "About Plugins" -> "Install Plugin...". 
+          Further instructions are available in the official Qt Creator documentation: [How to install plugins](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
+
+          Please refer to the main page of the project for usage information.
+
+          On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
+          To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
+          
+          *PS: I have a "Buy me a coffee" account if you want to supporting me, see the main page if interested in contributing something to say thank you for the plugin*.
+
+        files: |
+          release/${{ env.PLUGIN_NAME}}-${{ env.QT_CREATOR_VERSION }}-Linux-x64.7z
+          release/${{ env.PLUGIN_NAME}}-${{ env.QT_CREATOR_VERSION }}-Windows-x64.7z
+          
+        draft: false
+        prerelease: false
     # - name: Collect Binaries
     #   shell: pwsh
     #   run: |
