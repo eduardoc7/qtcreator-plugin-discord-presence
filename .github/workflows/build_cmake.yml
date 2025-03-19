@@ -15,51 +15,6 @@ env:
   NINJA_VERSION: "1.12.1"
 
 jobs:
-  # The release job.
-  # If the github.ref contains /tags/v a release will be set up.
-  # This is done before the builds to simplify the logic to upload the build artifacts to the release.
-  # The release stage a file that contains the URL of where the build artifacts must go.
-  # It is also executed only once, on one agent.
-  # release:
-  #   name: Create release
-  #   if: contains(github.ref, '/tags/v')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Create release
-  #       if: contains(github.ref, '/tags/v')
-  #       id: create_release
-  #       uses: actions/create-release@latest
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: ${{ github.ref }}
-  #         release_name: ${{ github.ref }}
-  #         body: |
-  #           Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
-  #           Download the correct file based on operating system and architecture of Qt Creator.
-  #           To install the plugin in Qt Creator, follow these steps: go to "Help" -> "About Plugins" -> "Install Plugin...". 
-  #           Further instructions are available in the official Qt Creator documentation: [How to install plugins](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
-
-  #           Please refer to the main page of the project for usage information.
-
-  #           On Windows, make sure to download the correct version for the Qt Creator used, not the architecture of the Operating System.
-  #           To check this: From Qt Creator, go to "Help" -> "About Qt Creator..."
-            
-  #           *PS: I have a "Buy me a coffee" account if you want to supporting me, see the main page if interested in contributing something to say thank you for the plugin*.
-            
-  #         draft: false
-  #         prerelease: false
-
-  #     - name: Store release url
-  #       shell: pwsh
-  #       run: Write-Output "${{ steps.create_release.outputs.upload_url }}" > ./release_upload_url.txt
-
-  #     - name: Upload release url
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         path: ./release_upload_url.txt
-  #         name: release_upload_url.txt
-
   build:
     name: Build ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
@@ -342,7 +297,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
+        release_name: ${{ needs.build.outputs.tag }}
         body: |
           Release for **Qt Creator ${{env.QT_CREATOR_VERSION}}.**
           Download the correct file based on operating system and architecture of Qt Creator.
@@ -362,77 +317,3 @@ jobs:
           
         draft: false
         prerelease: false
-    # - name: Collect Binaries
-    #   shell: pwsh
-    #   run: |
-    #     ${PLUGIN_DIR_BASE} = "Plugin"
-    #     ${PLUGIN_ARCHIVE}  = "CuteDiscordPresence-Plugin_QtC${env:QT_CREATOR_VERSION}_${env:OS}_${{matrix.config.arch}}"
-    #     $PLUGIN_DIR_OUT = "${PLUGIN_DIR_BASE}/lib/qtcreator/plugins"
-    #     New-Item -ItemType Directory -Path $PLUGIN_DIR_OUT -Force
-
-    #     # Copy dependency library
-    #     if ("${{runner.os}}" -eq "Linux") {
-    #       $DEPENDENCY_LIB_PATH = "dependencies/discord-rpc/linux-dynamic/lib/libdiscord-rpc.so"
-    #       Copy-Item -Path $DEPENDENCY_LIB_PATH -Destination $PLUGIN_DIR_OUT
-    #     }
-
-    #     switch ("${{runner.os}}")
-    #     {
-    #         "Windows" {
-    #           $PLUGIN_OBJ = (Get-ChildItem -Path . -Filter CuteDiscordPresence.dll -Recurse -ErrorAction SilentlyContinue -Force | Select-Object -First 1).FullName
-    #           Write-Output "PLUGIN_OBJ: $PLUGIN_OBJ"
-    #           Copy-Item -Path $PLUGIN_OBJ -Destination $PLUGIN_DIR_OUT
-    #           Push-Location $PLUGIN_DIR_BASE
-    #           $env:PLUGIN_ARCHIVE_NAME = "${PLUGIN_ARCHIVE}.zip"
-    #           7z a $env:PLUGIN_ARCHIVE_NAME lib
-    #           Pop-Location
-    #           dir
-    #         }
-    #         "Linux" {
-    #           $PLUGIN_OBJ = (Get-ChildItem -Path . -Filter libCuteDiscordPresence.so -Recurse -ErrorAction SilentlyContinue -Force | Select-Object -First 1).FullName
-    #           Write-Output "PLUGIN_OBJ: ${PLUGIN_OBJ}"
-    #           Copy-Item -Path "${PLUGIN_OBJ}" -Destination "${PLUGIN_DIR_OUT}/"
-    #           Push-Location ${PLUGIN_DIR_BASE}
-    #           ${env:PLUGIN_ARCHIVE_NAME} = "${PLUGIN_ARCHIVE}.tar.gz"
-    #           7z a -ttar "${PLUGIN_ARCHIVE}.tar" lib
-    #           7z a -tgzip "${env:PLUGIN_ARCHIVE_NAME}" "${PLUGIN_ARCHIVE}.tar"
-    #           Pop-Location
-    #         }
-    #     }
-
-    #     ${env:PLUGIN_ARCHIVE_FULL} = "${PLUGIN_DIR_BASE}/${env:PLUGIN_ARCHIVE_NAME}"
-
-    #     Write-Output "PLUGIN_ARCHIVE_FULL=${{github.workspace}}/${env:PLUGIN_ARCHIVE_FULL}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-    #     Write-Output "PLUGIN_ARCHIVE_NAME=${env:PLUGIN_ARCHIVE_NAME}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    # - uses: actions/upload-artifact@v4
-    #   id: upload_artifact
-    #   with:
-    #     path: ${{env.PLUGIN_ARCHIVE_FULL}}
-    #     name: ${{env.PLUGIN_ARCHIVE_NAME}}
-
-    # - name: Download release url
-    #   if: contains(github.ref, '/tags/v')
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: release_upload_url.txt
-    #     path: ./
-
-    # - name: Set Release Var
-    #   if: contains(github.ref, '/tags/v')
-    #   shell: pwsh
-    #   run: |
-    #     ${RELEASE_URL} = Get-Content ./release_upload_url.txt
-    #     Write-Output "Release URL: ${RELEASE_URL}"
-    #     Write-Output "RELEASE_URL=${RELEASE_URL}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    # - name: Upload release artifacts
-    #   if: contains(github.ref, '/tags/v')
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{env.RELEASE_URL}}
-    #     asset_path: ${{env.PLUGIN_ARCHIVE_FULL}}
-    #     asset_name: ${{env.PLUGIN_ARCHIVE_NAME}}
-    #     asset_content_type: application/zip
