@@ -24,7 +24,7 @@ The plugin currently supports the following operating systems:
 - Linux Derived 
 
 ## How to install the plugin on Qt Creator
-Download the plugin archive from the [release page](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/releases/tag/latest) and follow the installation tutorial provided in [Qt Documentation](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
+Download the plugin archive from the [release page](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/releases) and follow the installation tutorial provided in [Qt Documentation](https://doc.qt.io/qtcreator/creator-how-to-install-plugins.html)
 
 ## How to use with different versions of Qt Creator
 To use the plugin with different versions of Qt Creator, you need to generate a new build by specifying the target Qt Creator version and the corresponding Qt version in the build process. Modify the variables `${qt_dir}` and `${qtc_dir}` in the [CMakeLists.txt](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/blob/main/CMakeLists.txt). Alternatively, you can adjust the ENV variables in the [Github Action Workflow](https://github.com/eduardoc7/qtcreator-plugin-discord-presence/blob/main/.github/workflows/build_cmake.yml) to match the desired Qt and Qt Creator versions.
