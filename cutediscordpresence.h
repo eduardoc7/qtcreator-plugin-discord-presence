@@ -22,10 +22,6 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
 
-#include <functional>
-#include <iostream>
-#include <string>
-
 #include <discord_rpc.h>
 
 namespace QtCreatorDRPC {
@@ -106,7 +102,7 @@ protected slots:
 
 public:
   virtual bool initialize(const QStringList &arguments,
-                          QString *error_string) override;
+                          QString *error_string);
   virtual void extensionsInitialized() override;
   virtual ShutdownFlag aboutToShutdown() override;
 
